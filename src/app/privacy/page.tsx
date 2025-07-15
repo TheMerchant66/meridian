@@ -238,8 +238,8 @@ export default function PrivacyPage() {
                     <strong>Phone:</strong> (555) 123-BANK
                   </li>
                   <li>
-                    <strong>Mail:</strong> Privacy Officer, Stellarone Holdings,
-                    123 Financial District, New York, NY 10001
+                    <strong>Mail:</strong> Privacy Officer, Meridian Private
+                    Holdings, 123 Financial District, New York, NY 10001
                   </li>
                 </ul>
                 <p className="text-gray-600 mt-4 text-sm">

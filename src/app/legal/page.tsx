@@ -14,7 +14,7 @@ export default function LegalPage() {
         badgeIcon="⚖️"
         title="Legal Terms"
         subtitle="& Disclosures"
-        description="Important legal information, terms of service, and regulatory disclosures for Stellarone Holdings banking services."
+        description="Important legal information, terms of service, and regulatory disclosures for Meridian Private Holdings banking services."
       />
 
       {/* Legal Categories */}
@@ -98,9 +98,9 @@ export default function LegalPage() {
                   1. Acceptance of Terms
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  By accessing and using Stellarone Holdings banking services,
-                  you accept and agree to be bound by the terms and provision of
-                  this agreement.
+                  By accessing and using Meridian Private Holdings banking
+                  services, you accept and agree to be bound by the terms and
+                  provision of this agreement.
                 </p>
 
                 <h3 className="text-xl font-semibold mb-4">2. Account Terms</h3>
@@ -126,9 +126,9 @@ export default function LegalPage() {
 
               <div className="bg-white p-6 sm:p-8 rounded-xl mb-8">
                 <p className="text-gray-600 mb-4">
-                  Stellarone Holdings is a Member FDIC. Deposits are insured by
-                  the Federal Deposit Insurance Corporation up to the maximum
-                  amount allowed by law.
+                  Meridian Private Holdings is a Member FDIC. Deposits are
+                  insured by the Federal Deposit Insurance Corporation up to the
+                  maximum amount allowed by law.
                 </p>
                 <p className="text-gray-600">
                   For current FDIC insurance limits and coverage details, please

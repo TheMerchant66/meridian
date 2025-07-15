@@ -227,7 +227,7 @@ export function DepositUnderReviewEmail({
           <p
             style={{ color: "#a1a1aa", fontSize: "12px", textAlign: "center" }}
           >
-            Stellarone Holdings | Route des Acacias 60, 1211 Genève 73,
+            Meridian Private Holdings | Route des Acacias 60, 1211 Genève 73,
             Switzerland
             <br />
             This is an automated message, please do not reply.

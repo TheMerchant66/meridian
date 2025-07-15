@@ -232,7 +232,7 @@ export default function ContactPage() {
               Visit Our Locations
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-              Find a Stellarone Holdings branch near you for personalized
+              Find a Meridian Private Holdings branch near you for personalized
               service and support.
             </p>
           </div>

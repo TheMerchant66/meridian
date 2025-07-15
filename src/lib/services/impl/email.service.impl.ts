@@ -23,9 +23,9 @@ export class EmailServiceImpl implements EmailService {
 
     try {
       const mailOptions: SendMailOptions = {
-        from: '"Stellarone Holdings" <no-reply@meridianprivateholdings.com>',
+        from: '"Meridian Private Holdings" <no-reply@meridianprivateholdings.com>',
         to,
-        subject: "Your One-Time Password (OTP) for Stellarone Holdings",
+        subject: "Your One-Time Password (OTP) for Meridian Private Holdings",
         html: this.getOTPEmailTemplate(otpCode),
       };
 
@@ -53,7 +53,7 @@ export class EmailServiceImpl implements EmailService {
         <div style="background: #ffffff; padding: 28px 24px; border-radius: 16px 16px 0 0; text-align: center; position: relative; overflow: hidden;">
           <div style="position: absolute; top: 20px; left: 20px; width: 32px; height: 32px; background: rgba(96, 165, 250, 0.2); border-radius: 50%; animation: pulse 2s infinite;"></div>
           <div style="position: absolute; bottom: 20px; right: 20px; width: 24px; height: 24px; background: rgba(192, 132, 252, 0.2); border-radius: 50%; animation: pulse 2s infinite 1s;"></div>
-          <img src="https://meridianprivateholdings.com/images/logo-black.png" alt="Stellarone Holdings" style="height: 40px; width: auto; margin: 0;" />
+          <img src="https://meridianprivateholdings.com/images/logo-black.png" alt="Meridian Private Holdings" style="height: 40px; width: auto; margin: 0;" />
         </div>
         <!-- Content -->
         <div style="background: #ffffff; padding: 32px 24px; border-radius: 0 0 16px 16px;">
@@ -76,7 +76,7 @@ export class EmailServiceImpl implements EmailService {
           </p>
           <div style="margin-top: 32px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
             <p style="color: #a1a1aa; font-size: 12px; text-align: center;">
-              Stellarone Holdings | 123 Banking Street, Finance City, FC 12345
+              Meridian Private Holdings | 123 Banking Street, Finance City, FC 12345
               <br />
               This is an automated message, please do not reply.
             </p>
@@ -96,9 +96,9 @@ export class EmailServiceImpl implements EmailService {
   async sendPasswordResetEmail(to: string, resetUrl: string): Promise<void> {
     try {
       const mailOptions: SendMailOptions = {
-        from: '"Stellarone Holdings" <no-reply@meridianprivateholdings.com>',
+        from: '"Meridian Private Holdings" <no-reply@meridianprivateholdings.com>',
         to,
-        subject: "Password Reset Request for Stellarone Holdings",
+        subject: "Password Reset Request for Meridian Private Holdings",
         html: this.getPasswordResetEmailTemplate(resetUrl),
       };
 
@@ -126,13 +126,13 @@ export class EmailServiceImpl implements EmailService {
         <div style="background: #ffffff; padding: 28px 24px; border-radius: 16px 16px 0 0; text-align: center; position: relative; overflow: hidden;">
           <div style="position: absolute; top: 20px; left: 20px; width: 32px; height: 32px; background: rgba(96, 165, 250, 0.2); border-radius: 50%; animation: pulse 2s infinite;"></div>
           <div style="position: absolute; bottom: 20px; right: 20px; width: 24px; height: 24px; background: rgba(192, 132, 252, 0.2); border-radius: 50%; animation: pulse 2s infinite 1s;"></div>
-          <img src="https://meridianprivateholdings.com/images/logo-black.png" alt="Stellarone Holdings" style="height: 40px; width: auto; margin: 0;" />
+          <img src="https://meridianprivateholdings.com/images/logo-black.png" alt="Meridian Private Holdings" style="height: 40px; width: auto; margin: 0;" />
         </div>
         <!-- Content -->
         <div style="background: #ffffff; padding: 32px 24px; border-radius: 0 0 16px 16px;">
           <h2 style="color: #18181b; font-size: 24px; font-weight: 600; margin-bottom: 16px;">Reset Your Password</h2>
           <p style="color: #52525b; font-size: 16px; line-height: 1.5; margin-bottom: 24px;">
-            You requested to reset your password for your Stellarone Holdings account. Click the button below to create a new password. This link will expire in 1 hour.
+            You requested to reset your password for your Meridian Private Holdings account. Click the button below to create a new password. This link will expire in 1 hour.
           </p>
           <div style="text-align: center; margin-bottom: 24px;">
             <a href="${resetUrl}" style="display: inline-block; background: linear-gradient(to right, #18181b, #27272a); color: #ffffff; font-size: 16px; font-weight: 600; padding: 12px 24px; border-radius: 8px; text-decoration: none;">
@@ -149,7 +149,7 @@ export class EmailServiceImpl implements EmailService {
           </p>
           <div style="margin-top: 32px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
             <p style="color: #a1a1aa; font-size: 12px; text-align: center;">
-              Stellarone Holdings | 123 Banking Street, Finance City, FC 12345
+              Meridian Private Holdings | 123 Banking Street, Finance City, FC 12345
               <br />
               This is an automated message, please do not reply.
             </p>

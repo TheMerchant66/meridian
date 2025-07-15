@@ -1,15 +1,15 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { CheckCircle, PiggyBank, TrendingUp, Smartphone } from "lucide-react"
-import Image from "next/image"
-import { BiSolidBank, BiSolidCreditCardAlt } from "react-icons/bi"
-import { BsFillShieldLockFill } from "react-icons/bs"
-import SiteHeader from "@/components/site-header"
-import SiteFooter from "@/components/site-footer"
-import CTASection from "@/components/cta-section"
-import ScrollReveal from "@/components/scroll-reveal"
-import StaggeredReveal from "@/components/staggered-reveal"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { CheckCircle, PiggyBank, TrendingUp, Smartphone } from "lucide-react";
+import Image from "next/image";
+import { BiSolidBank, BiSolidCreditCardAlt } from "react-icons/bi";
+import { BsFillShieldLockFill } from "react-icons/bs";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
+import CTASection from "@/components/cta-section";
+import ScrollReveal from "@/components/scroll-reveal";
+import StaggeredReveal from "@/components/staggered-reveal";
 
 export default function PersonalBankingPage() {
   return (
@@ -30,14 +30,17 @@ export default function PersonalBankingPage() {
             <ScrollReveal direction="up" delay={400}>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-semibold text-zinc-100 leading-tight">
                 Banking Made Simple
-                <span className="text-zinc-300 block">For Your Everyday Life</span>
+                <span className="text-zinc-300 block">
+                  For Your Everyday Life
+                </span>
               </h1>
             </ScrollReveal>
 
             <ScrollReveal direction="up" delay={600}>
               <p className="mt-6 text-lg sm:text-lg text-zinc-500 max-w-2xl mx-auto">
-                From checking accounts to savings goals, we provide comprehensive personal banking solutions tailored to
-                your lifestyle and financial objectives.
+                From checking accounts to savings goals, we provide
+                comprehensive personal banking solutions tailored to your
+                lifestyle and financial objectives.
               </p>
             </ScrollReveal>
           </div>
@@ -53,20 +56,28 @@ export default function PersonalBankingPage() {
                 Choose Your Perfect Account
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Whether you're just starting out or managing complex finances, we have the right account for you.
+                Whether you're just starting out or managing complex finances,
+                we have the right account for you.
               </p>
             </div>
           </ScrollReveal>
 
-          <StaggeredReveal className="grid md:grid-cols-3 gap-8" staggerDelay={200} direction="up">
+          <StaggeredReveal
+            className="grid md:grid-cols-3 gap-8"
+            staggerDelay={200}
+            direction="up"
+          >
             <Card className="p-8 border-zinc-100 hover:bg-gradient-to-br hover:from-white hover:to-blue-50 rounded-2xl duration-500 transition-all hover:scale-105 hover:shadow-xl group">
               <CardContent className="py-5">
                 <div className="w-16 h-16 bg-zinc-100 rounded-3xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                   <BiSolidBank className="w-8 h-8 text-zinc-800" />
                 </div>
-                <h3 className="text-2xl font-semibold mb-4">Essential Checking</h3>
+                <h3 className="text-2xl font-semibold mb-4">
+                  Essential Checking
+                </h3>
                 <p className="text-gray-600 mb-6">
-                  Perfect for everyday banking with no monthly fees and unlimited transactions.
+                  Perfect for everyday banking with no monthly fees and
+                  unlimited transactions.
                 </p>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center">
@@ -93,9 +104,12 @@ export default function PersonalBankingPage() {
                 <div className="w-16 h-16 bg-zinc-100 rounded-3xl flex items-center justify-center mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                   <PiggyBank className="w-8 h-8 text-zinc-800" />
                 </div>
-                <h3 className="text-2xl font-semibold mb-4">High-Yield Savings</h3>
+                <h3 className="text-2xl font-semibold mb-4">
+                  High-Yield Savings
+                </h3>
                 <p className="text-gray-600 mb-6">
-                  Grow your money with competitive interest rates and flexible access.
+                  Grow your money with competitive interest rates and flexible
+                  access.
                 </p>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center">
@@ -124,7 +138,8 @@ export default function PersonalBankingPage() {
                 </div>
                 <h3 className="text-2xl font-semibold mb-4">Premium Banking</h3>
                 <p className="text-gray-600 mb-6">
-                  Exclusive benefits and personalized service for sophisticated banking needs.
+                  Exclusive benefits and personalized service for sophisticated
+                  banking needs.
                 </p>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center">
@@ -155,19 +170,31 @@ export default function PersonalBankingPage() {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <ScrollReveal direction="left" delay={200}>
               <div>
-                <h2 className="text-4xl font-semibold text-gray-900 mb-6">Banking Tools That Work For You</h2>
+                <h2 className="text-4xl font-semibold text-gray-900 mb-6">
+                  Banking Tools That Work For You
+                </h2>
                 <p className="text-gray-600 mb-8 max-w-lg">
-                  Access powerful tools and features designed to make managing your money easier and more efficient.
+                  Access powerful tools and features designed to make managing
+                  your money easier and more efficient.
                 </p>
 
-                <StaggeredReveal className="space-y-6" staggerDelay={200} direction="left">
+                <StaggeredReveal
+                  className="space-y-6"
+                  staggerDelay={200}
+                  direction="left"
+                >
                   <div className="flex items-start space-x-4 group">
                     <div className="w-12 h-12 bg-zinc-900 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                       <Smartphone className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold mb-2">Mobile Banking</h3>
-                      <p className="text-gray-600">Bank anywhere, anytime with our award-winning mobile app.</p>
+                      <h3 className="text-xl font-semibold mb-2">
+                        Mobile Banking
+                      </h3>
+                      <p className="text-gray-600">
+                        Bank anywhere, anytime with our award-winning mobile
+                        app.
+                      </p>
                     </div>
                   </div>
 
@@ -176,9 +203,12 @@ export default function PersonalBankingPage() {
                       <BsFillShieldLockFill className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold mb-2">Advanced Security</h3>
+                      <h3 className="text-xl font-semibold mb-2">
+                        Advanced Security
+                      </h3>
                       <p className="text-gray-600">
-                        Your money is protected with bank-level security and fraud monitoring.
+                        Your money is protected with bank-level security and
+                        fraud monitoring.
                       </p>
                     </div>
                   </div>
@@ -188,8 +218,13 @@ export default function PersonalBankingPage() {
                       <TrendingUp className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold mb-2">Financial Insights</h3>
-                      <p className="text-gray-600">Track spending, set budgets, and achieve your financial goals.</p>
+                      <h3 className="text-xl font-semibold mb-2">
+                        Financial Insights
+                      </h3>
+                      <p className="text-gray-600">
+                        Track spending, set budgets, and achieve your financial
+                        goals.
+                      </p>
                     </div>
                   </div>
                 </StaggeredReveal>
@@ -214,7 +249,7 @@ export default function PersonalBankingPage() {
       {/* CTA Section */}
       <CTASection
         title="Ready to Experience Better Banking?"
-        description="Open your account today and discover why millions trust Stellarone Holdings with their finances."
+        description="Open your account today and discover why millions trust Meridian Private Holdings with their finances."
         primaryButtonText="Open Account Now"
         secondaryButtonText="Compare Accounts"
       />
@@ -222,5 +257,5 @@ export default function PersonalBankingPage() {
       {/* Footer */}
       <SiteFooter />
     </div>
-  )
+  );
 }

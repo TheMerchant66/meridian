@@ -16,11 +16,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Stellarone Holdings",
-    template: "%s | Stellarone Holdings",
+    default: "Meridian Private Holdings",
+    template: "%s | Meridian Private Holdings",
   },
   description:
-    "Stellarone Holdings - Your trusted partner in modern banking and financial services. Experience secure, innovative, and personalized banking solutions.",
+    "Meridian Private Holdings - Your trusted partner in modern banking and financial services. Experience secure, innovative, and personalized banking solutions.",
   keywords: [
     "banking",
     "financial services",
@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     "secure banking",
     "modern banking",
   ],
-  authors: [{ name: "Stellarone Holdings" }],
-  creator: "Stellarone Holdings",
-  publisher: "Stellarone Holdings",
+  authors: [{ name: "Meridian Private Holdings" }],
+  creator: "Meridian Private Holdings",
+  publisher: "Meridian Private Holdings",
   formatDetection: {
     email: false,
     address: false,
@@ -45,22 +45,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "https://meridianprivateholdings.com",
-    title: "Stellarone Holdings",
+    title: "Meridian Private Holdings",
     description:
       "Your trusted partner in modern banking and financial services",
-    siteName: "Stellarone Holdings",
+    siteName: "Meridian Private Holdings",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Stellarone Holdings",
+        alt: "Meridian Private Holdings",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Stellarone Holdings",
+    title: "Meridian Private Holdings",
     description:
       "Your trusted partner in modern banking and financial services",
     images: ["/twitter-image.jpg"],

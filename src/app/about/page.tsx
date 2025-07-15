@@ -1,18 +1,18 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Users, Award, Globe, TrendingUp, Heart, Shield } from "lucide-react"
-import Image from "next/image"
-import PageLayout from "@/components/page-layout"
-import HeroSection from "@/components/hero-section"
-import CTASection from "@/components/cta-section"
-import ScrollReveal from "@/components/scroll-reveal"
-import StaggeredReveal from "@/components/staggered-reveal"
+import { Card, CardContent } from "@/components/ui/card";
+import { Users, Award, Globe, TrendingUp, Heart, Shield } from "lucide-react";
+import Image from "next/image";
+import PageLayout from "@/components/page-layout";
+import HeroSection from "@/components/hero-section";
+import CTASection from "@/components/cta-section";
+import ScrollReveal from "@/components/scroll-reveal";
+import StaggeredReveal from "@/components/staggered-reveal";
 
 export default function AboutPage() {
   return (
     <PageLayout currentPage="/about">
       {/* Hero Section */}
       <HeroSection
-        badgeText="About Stellarone Holdings"
+        badgeText="About Meridian Private Holdings"
         badgeIcon="🏦"
         title="Banking Built"
         subtitle="For Your Future"
@@ -28,21 +28,30 @@ export default function AboutPage() {
                 Our Mission & Vision
               </h2>
               <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-                We believe in empowering people through financial innovation and exceptional service.
+                We believe in empowering people through financial innovation and
+                exceptional service.
               </p>
             </div>
           </ScrollReveal>
 
-          <StaggeredReveal className="grid md:grid-cols-2 gap-8 lg:gap-12" staggerDelay={300} direction="up">
+          <StaggeredReveal
+            className="grid md:grid-cols-2 gap-8 lg:gap-12"
+            staggerDelay={300}
+            direction="up"
+          >
             <Card className="p-6 sm:p-8 border-zinc-100 hover:bg-gradient-to-br hover:from-white hover:to-blue-50 rounded-xl sm:rounded-2xl duration-500 transition-all hover:scale-105 hover:shadow-xl group">
               <CardContent className="py-3 sm:py-5">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-zinc-100 rounded-2xl sm:rounded-3xl flex items-center justify-center mb-4 sm:mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                   <Heart className="w-6 h-6 sm:w-8 sm:h-8 text-zinc-800" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Our Mission</h3>
+                <h3 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">
+                  Our Mission
+                </h3>
                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                  To provide accessible, innovative financial services that empower our customers to achieve their
-                  financial goals while building stronger communities through responsible banking practices.
+                  To provide accessible, innovative financial services that
+                  empower our customers to achieve their financial goals while
+                  building stronger communities through responsible banking
+                  practices.
                 </p>
               </CardContent>
             </Card>
@@ -52,10 +61,14 @@ export default function AboutPage() {
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-zinc-100 rounded-2xl sm:rounded-3xl flex items-center justify-center mb-4 sm:mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                   <Globe className="w-6 h-6 sm:w-8 sm:h-8 text-zinc-800" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">Our Vision</h3>
+                <h3 className="text-xl sm:text-2xl font-semibold mb-3 sm:mb-4">
+                  Our Vision
+                </h3>
                 <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
-                  To be the leading digital-first bank that transforms the financial industry through cutting-edge
-                  technology, exceptional customer experience, and unwavering commitment to financial inclusion.
+                  To be the leading digital-first bank that transforms the
+                  financial industry through cutting-edge technology,
+                  exceptional customer experience, and unwavering commitment to
+                  financial inclusion.
                 </p>
               </CardContent>
             </Card>
@@ -68,29 +81,52 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal direction="up" delay={200}>
             <div className="text-center mb-12 sm:mb-16">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900 mb-4">Trusted by Millions</h2>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900 mb-4">
+                Trusted by Millions
+              </h2>
               <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-                Our numbers speak to the trust and confidence our customers place in us every day.
+                Our numbers speak to the trust and confidence our customers
+                place in us every day.
               </p>
             </div>
           </ScrollReveal>
 
-          <StaggeredReveal className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8" staggerDelay={200} direction="up">
+          <StaggeredReveal
+            className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8"
+            staggerDelay={200}
+            direction="up"
+          >
             <div className="text-center p-6 bg-white rounded-xl hover:scale-110 transition-transform duration-300">
-              <div className="text-3xl sm:text-4xl font-bold text-zinc-900 mb-2">2M+</div>
-              <div className="text-gray-600 text-sm sm:text-base">Active Customers</div>
+              <div className="text-3xl sm:text-4xl font-bold text-zinc-900 mb-2">
+                2M+
+              </div>
+              <div className="text-gray-600 text-sm sm:text-base">
+                Active Customers
+              </div>
             </div>
             <div className="text-center p-6 bg-white rounded-xl hover:scale-110 transition-transform duration-300">
-              <div className="text-3xl sm:text-4xl font-bold text-zinc-900 mb-2">$50B+</div>
-              <div className="text-gray-600 text-sm sm:text-base">Assets Under Management</div>
+              <div className="text-3xl sm:text-4xl font-bold text-zinc-900 mb-2">
+                $50B+
+              </div>
+              <div className="text-gray-600 text-sm sm:text-base">
+                Assets Under Management
+              </div>
             </div>
             <div className="text-center p-6 bg-white rounded-xl hover:scale-110 transition-transform duration-300">
-              <div className="text-3xl sm:text-4xl font-bold text-zinc-900 mb-2">150+</div>
-              <div className="text-gray-600 text-sm sm:text-base">Branch Locations</div>
+              <div className="text-3xl sm:text-4xl font-bold text-zinc-900 mb-2">
+                150+
+              </div>
+              <div className="text-gray-600 text-sm sm:text-base">
+                Branch Locations
+              </div>
             </div>
             <div className="text-center p-6 bg-white rounded-xl hover:scale-110 transition-transform duration-300">
-              <div className="text-3xl sm:text-4xl font-bold text-zinc-900 mb-2">50+</div>
-              <div className="text-gray-600 text-sm sm:text-base">Years of Service</div>
+              <div className="text-3xl sm:text-4xl font-bold text-zinc-900 mb-2">
+                50+
+              </div>
+              <div className="text-gray-600 text-sm sm:text-base">
+                Years of Service
+              </div>
             </div>
           </StaggeredReveal>
         </div>
@@ -101,9 +137,12 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal direction="up" delay={200}>
             <div className="text-center mb-12 sm:mb-16">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900 mb-4">Leadership Team</h2>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900 mb-4">
+                Leadership Team
+              </h2>
               <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-                Meet the experienced professionals who guide our vision and drive our success.
+                Meet the experienced professionals who guide our vision and
+                drive our success.
               </p>
             </div>
           </ScrollReveal>
@@ -148,8 +187,12 @@ export default function AboutPage() {
                     />
                     <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
                   </div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-2">{leader.name}</h3>
-                  <p className="text-zinc-600 font-medium mb-2">{leader.role}</p>
+                  <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                    {leader.name}
+                  </h3>
+                  <p className="text-zinc-600 font-medium mb-2">
+                    {leader.role}
+                  </p>
                   <p className="text-gray-500 text-sm">{leader.experience}</p>
                 </CardContent>
               </Card>
@@ -163,9 +206,12 @@ export default function AboutPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal direction="up" delay={200}>
             <div className="text-center mb-12 sm:mb-16">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900 mb-4">Our Core Values</h2>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900 mb-4">
+                Our Core Values
+              </h2>
               <p className="text-gray-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-                These principles guide everything we do and shape how we serve our customers and communities.
+                These principles guide everything we do and shape how we serve
+                our customers and communities.
               </p>
             </div>
           </ScrollReveal>
@@ -222,7 +268,9 @@ export default function AboutPage() {
                     <value.icon className="w-6 h-6 text-zinc-800" />
                   </div>
                   <h3 className="text-lg font-semibold mb-3">{value.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{value.description}</p>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {value.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -233,10 +281,10 @@ export default function AboutPage() {
       {/* CTA Section */}
       <CTASection
         title="Ready to Experience Banking Excellence?"
-        description="Join millions of customers who trust Stellarone Holdings for their financial needs. Discover what makes us different."
+        description="Join millions of customers who trust Meridian Private Holdings for their financial needs. Discover what makes us different."
         primaryButtonText="Open Account Today"
         secondaryButtonText="Learn More About Us"
       />
     </PageLayout>
-  )
+  );
 }
