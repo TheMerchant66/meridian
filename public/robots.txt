@@ -3,4 +3,4 @@ User-agent: *
 Disallow: /
 
 # Sitemap location (kept for reference but not needed)
-Sitemap: https://stellaroneholdings.com/sitemap.xml 
+Sitemap: https://meridianprivateholdings.com/sitemap.xml 

@@ -17,10 +17,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: {
     default: "Stellarone Holdings",
-    template: "%s | Stellarone Holdings"
+    template: "%s | Stellarone Holdings",
   },
-  description: "Stellarone Holdings - Your trusted partner in modern banking and financial services. Experience secure, innovative, and personalized banking solutions.",
-  keywords: ["banking", "financial services", "online banking", "digital-banking", "secure banking", "modern banking"],
+  description:
+    "Stellarone Holdings - Your trusted partner in modern banking and financial services. Experience secure, innovative, and personalized banking solutions.",
+  keywords: [
+    "banking",
+    "financial services",
+    "online banking",
+    "digital-banking",
+    "secure banking",
+    "modern banking",
+  ],
   authors: [{ name: "Stellarone Holdings" }],
   creator: "Stellarone Holdings",
   publisher: "Stellarone Holdings",
@@ -29,16 +37,17 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://stellaroneholdings.com"),
+  metadataBase: new URL("https://meridianprivateholdings.com"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://stellaroneholdings.com",
+    url: "https://meridianprivateholdings.com",
     title: "Stellarone Holdings",
-    description: "Your trusted partner in modern banking and financial services",
+    description:
+      "Your trusted partner in modern banking and financial services",
     siteName: "Stellarone Holdings",
     images: [
       {
@@ -52,7 +61,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Stellarone Holdings",
-    description: "Your trusted partner in modern banking and financial services",
+    description:
+      "Your trusted partner in modern banking and financial services",
     images: ["/twitter-image.jpg"],
     creator: "@stellarone",
   },
@@ -78,7 +88,6 @@ export const metadata: Metadata = {
     initialScale: 1,
     maximumScale: 1,
   },
- 
 };
 
 export default function RootLayout({
@@ -91,46 +100,44 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <UserProvider>
-          {children}
-        </UserProvider>
+        <UserProvider>{children}</UserProvider>
         <Toaster
           position="top-center"
           toastOptions={{
             duration: 3000,
             style: {
-              background: 'rgba(17, 17, 17, 0.95)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              color: '#fff',
-              borderRadius: '12px',
-              padding: '16px 20px',
-              fontSize: '14px',
-              fontWeight: '500',
-              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-              maxWidth: '300px',
-              width: '100%',
-              margin: '0 auto',
+              background: "rgba(17, 17, 17, 0.95)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              color: "#fff",
+              borderRadius: "12px",
+              padding: "16px 20px",
+              fontSize: "14px",
+              fontWeight: "500",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.2)",
+              maxWidth: "300px",
+              width: "100%",
+              margin: "0 auto",
             },
             success: {
               iconTheme: {
-                primary: '#22c55e',
-                secondary: '#fff',
+                primary: "#22c55e",
+                secondary: "#fff",
               },
             },
             error: {
               iconTheme: {
-                primary: '#ef4444',
-                secondary: '#fff',
+                primary: "#ef4444",
+                secondary: "#fff",
               },
             },
             loading: {
               iconTheme: {
-                primary: '#3b82f6',
-                secondary: '#fff',
+                primary: "#3b82f6",
+                secondary: "#fff",
               },
             },
-            className: 'toast-custom',
+            className: "toast-custom",
           }}
         />
       </body>

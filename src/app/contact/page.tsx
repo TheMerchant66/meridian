@@ -101,7 +101,7 @@ export default function ContactPage() {
                   {
                     icon: Mail,
                     title: "Email Support",
-                    content: ["General: helpdesk@stellaroneholdings.com"],
+                    content: ["General: helpdesk@meridianprivateholdings.com"],
                   },
                 ].map((info, index) => (
                   <div

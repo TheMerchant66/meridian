@@ -1,9 +1,9 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { FileText, Scale, Shield, AlertCircle } from "lucide-react"
-import PageLayout from "@/components/page-layout"
-import HeroSection from "@/components/hero-section"
-import ScrollReveal from "@/components/scroll-reveal"
-import StaggeredReveal from "@/components/staggered-reveal"
+import { Card, CardContent } from "@/components/ui/card";
+import { FileText, Scale, Shield, AlertCircle } from "lucide-react";
+import PageLayout from "@/components/page-layout";
+import HeroSection from "@/components/hero-section";
+import ScrollReveal from "@/components/scroll-reveal";
+import StaggeredReveal from "@/components/staggered-reveal";
 
 export default function LegalPage() {
   return (
@@ -30,8 +30,12 @@ export default function LegalPage() {
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-zinc-100 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                   <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-zinc-800" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Terms of Service</h3>
-                <p className="text-gray-600 text-sm">Conditions governing your use of our services</p>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                  Terms of Service
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Conditions governing your use of our services
+                </p>
               </CardContent>
             </Card>
 
@@ -40,8 +44,12 @@ export default function LegalPage() {
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-zinc-100 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                   <Scale className="w-6 h-6 sm:w-8 sm:h-8 text-zinc-800" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Regulatory Compliance</h3>
-                <p className="text-gray-600 text-sm">FDIC insurance and regulatory information</p>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                  Regulatory Compliance
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  FDIC insurance and regulatory information
+                </p>
               </CardContent>
             </Card>
 
@@ -50,8 +58,12 @@ export default function LegalPage() {
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-zinc-100 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                   <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-zinc-800" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Security Policies</h3>
-                <p className="text-gray-600 text-sm">How we protect your information and accounts</p>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                  Security Policies
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  How we protect your information and accounts
+                </p>
               </CardContent>
             </Card>
 
@@ -60,8 +72,12 @@ export default function LegalPage() {
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-zinc-100 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">
                   <AlertCircle className="w-6 h-6 sm:w-8 sm:h-8 text-zinc-800" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Disclosures</h3>
-                <p className="text-gray-600 text-sm">Important notices and fee schedules</p>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                  Disclosures
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Important notices and fee schedules
+                </p>
               </CardContent>
             </Card>
           </StaggeredReveal>
@@ -73,45 +89,63 @@ export default function LegalPage() {
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
           <ScrollReveal direction="up" delay={200}>
             <div className="prose prose-gray max-w-none">
-              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-6">Terms of Service</h2>
+              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-6">
+                Terms of Service
+              </h2>
 
               <div className="bg-white p-6 sm:p-8 rounded-xl mb-8">
-                <h3 className="text-xl font-semibold mb-4">1. Acceptance of Terms</h3>
+                <h3 className="text-xl font-semibold mb-4">
+                  1. Acceptance of Terms
+                </h3>
                 <p className="text-gray-600 mb-4">
-                  By accessing and using Stellarone Holdings banking services, you accept and agree to be bound by the
-                  terms and provision of this agreement.
+                  By accessing and using Stellarone Holdings banking services,
+                  you accept and agree to be bound by the terms and provision of
+                  this agreement.
                 </p>
 
                 <h3 className="text-xl font-semibold mb-4">2. Account Terms</h3>
                 <p className="text-gray-600 mb-4">
-                  All accounts are subject to approval. We reserve the right to refuse service, terminate accounts, or
-                  cancel transactions in our sole discretion.
+                  All accounts are subject to approval. We reserve the right to
+                  refuse service, terminate accounts, or cancel transactions in
+                  our sole discretion.
                 </p>
 
-                <h3 className="text-xl font-semibold mb-4">3. Electronic Communications</h3>
+                <h3 className="text-xl font-semibold mb-4">
+                  3. Electronic Communications
+                </h3>
                 <p className="text-gray-600 mb-4">
-                  By using our services, you consent to receive communications from us electronically, including account
-                  statements, notices, and other disclosures.
+                  By using our services, you consent to receive communications
+                  from us electronically, including account statements, notices,
+                  and other disclosures.
                 </p>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-6">FDIC Insurance</h2>
+              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-6">
+                FDIC Insurance
+              </h2>
 
               <div className="bg-white p-6 sm:p-8 rounded-xl mb-8">
                 <p className="text-gray-600 mb-4">
-                  Stellarone Holdings is a Member FDIC. Deposits are insured by the Federal Deposit Insurance
-                  Corporation up to the maximum amount allowed by law.
+                  Stellarone Holdings is a Member FDIC. Deposits are insured by
+                  the Federal Deposit Insurance Corporation up to the maximum
+                  amount allowed by law.
                 </p>
                 <p className="text-gray-600">
-                  For current FDIC insurance limits and coverage details, please visit{" "}
-                  <a href="https://www.fdic.gov" className="text-blue-600 hover:underline">
+                  For current FDIC insurance limits and coverage details, please
+                  visit{" "}
+                  <a
+                    href="https://www.fdic.gov"
+                    className="text-blue-600 hover:underline"
+                  >
                     www.fdic.gov
                   </a>
                   .
                 </p>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-6">Fee Schedule</h2>
+              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-6">
+                Fee Schedule
+              </h2>
 
               <div className="bg-white p-6 sm:p-8 rounded-xl mb-8">
                 <div className="overflow-x-auto">
@@ -124,7 +158,9 @@ export default function LegalPage() {
                     </thead>
                     <tbody className="text-gray-600">
                       <tr className="border-b">
-                        <td className="py-3">Monthly Maintenance (Essential Checking)</td>
+                        <td className="py-3">
+                          Monthly Maintenance (Essential Checking)
+                        </td>
                         <td className="py-3">$0</td>
                       </tr>
                       <tr className="border-b">
@@ -148,21 +184,25 @@ export default function LegalPage() {
                 </div>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-6">Contact Information</h2>
+              <h2 className="text-2xl sm:text-3xl font-semibold text-gray-900 mb-6">
+                Contact Information
+              </h2>
 
               <div className="bg-white p-6 sm:p-8 rounded-xl">
                 <p className="text-gray-600 mb-4">
-                  For questions about these terms or our services, please contact us:
+                  For questions about these terms or our services, please
+                  contact us:
                 </p>
                 <ul className="text-gray-600 space-y-2">
                   <li>
                     <strong>Phone:</strong> (555) 123-BANK
                   </li>
                   <li>
-                    <strong>Email:</strong> legal@stellaroneholdings.com
+                    <strong>Email:</strong> legal@meridianprivateholdings.com
                   </li>
                   <li>
-                    <strong>Address:</strong> 123 Financial District, New York, NY 10001
+                    <strong>Address:</strong> 123 Financial District, New York,
+                    NY 10001
                   </li>
                 </ul>
               </div>
@@ -171,5 +211,5 @@ export default function LegalPage() {
         </div>
       </section>
     </PageLayout>
-  )
+  );
 }

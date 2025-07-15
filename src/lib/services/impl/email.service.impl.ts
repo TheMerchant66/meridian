@@ -23,7 +23,7 @@ export class EmailServiceImpl implements EmailService {
 
     try {
       const mailOptions: SendMailOptions = {
-        from: '"Stellarone Holdings" <no-reply@stellaroneholdings.com>',
+        from: '"Stellarone Holdings" <no-reply@meridianprivateholdings.com>',
         to,
         subject: "Your One-Time Password (OTP) for Stellarone Holdings",
         html: this.getOTPEmailTemplate(otpCode),
@@ -53,7 +53,7 @@ export class EmailServiceImpl implements EmailService {
         <div style="background: #ffffff; padding: 28px 24px; border-radius: 16px 16px 0 0; text-align: center; position: relative; overflow: hidden;">
           <div style="position: absolute; top: 20px; left: 20px; width: 32px; height: 32px; background: rgba(96, 165, 250, 0.2); border-radius: 50%; animation: pulse 2s infinite;"></div>
           <div style="position: absolute; bottom: 20px; right: 20px; width: 24px; height: 24px; background: rgba(192, 132, 252, 0.2); border-radius: 50%; animation: pulse 2s infinite 1s;"></div>
-          <img src="https://stellaroneholdings.com/images/logo-black.png" alt="Stellarone Holdings" style="height: 40px; width: auto; margin: 0;" />
+          <img src="https://meridianprivateholdings.com/images/logo-black.png" alt="Stellarone Holdings" style="height: 40px; width: auto; margin: 0;" />
         </div>
         <!-- Content -->
         <div style="background: #ffffff; padding: 32px 24px; border-radius: 0 0 16px 16px;">
@@ -96,7 +96,7 @@ export class EmailServiceImpl implements EmailService {
   async sendPasswordResetEmail(to: string, resetUrl: string): Promise<void> {
     try {
       const mailOptions: SendMailOptions = {
-        from: '"Stellarone Holdings" <no-reply@stellaroneholdings.com>',
+        from: '"Stellarone Holdings" <no-reply@meridianprivateholdings.com>',
         to,
         subject: "Password Reset Request for Stellarone Holdings",
         html: this.getPasswordResetEmailTemplate(resetUrl),
@@ -126,7 +126,7 @@ export class EmailServiceImpl implements EmailService {
         <div style="background: #ffffff; padding: 28px 24px; border-radius: 16px 16px 0 0; text-align: center; position: relative; overflow: hidden;">
           <div style="position: absolute; top: 20px; left: 20px; width: 32px; height: 32px; background: rgba(96, 165, 250, 0.2); border-radius: 50%; animation: pulse 2s infinite;"></div>
           <div style="position: absolute; bottom: 20px; right: 20px; width: 24px; height: 24px; background: rgba(192, 132, 252, 0.2); border-radius: 50%; animation: pulse 2s infinite 1s;"></div>
-          <img src="https://stellaroneholdings.com/images/logo-black.png" alt="Stellarone Holdings" style="height: 40px; width: auto; margin: 0;" />
+          <img src="https://meridianprivateholdings.com/images/logo-black.png" alt="Stellarone Holdings" style="height: 40px; width: auto; margin: 0;" />
         </div>
         <!-- Content -->
         <div style="background: #ffffff; padding: 32px 24px; border-radius: 0 0 16px 16px;">
