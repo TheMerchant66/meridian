@@ -1,0 +1,6 @@
+# Disallow all crawlers
+User-agent: *
+Disallow: /
+
+# Sitemap location (kept for reference but not needed)
+Sitemap: https://stellaroneholdings.com/sitemap.xml 
