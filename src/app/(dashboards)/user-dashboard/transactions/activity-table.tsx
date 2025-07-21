@@ -98,6 +98,26 @@ interface IUser {
   email: string;
 }
 
+interface IChequeDetails {
+  chequeNumber: string;
+  date: string;
+  description: string;
+  frontImage: string;
+  backImage: string;
+}
+
+interface ITransferDetails {
+  accountName: string;
+  accountNumber: string;
+  bankName: string;
+  country: string;
+  swiftCode: string;
+  iban?: string;
+  bankAddress: string;
+  description?: string;
+}
+
+// Update ITransaction to include these fields
 interface ITransaction {
   _id: string;
   accountType: string;
@@ -110,6 +130,11 @@ interface ITransaction {
   currency: ICurrency;
   user: IUser;
   cryptoDetails?: ICryptoDetails;
+  chequeDetails?: IChequeDetails;
+  transferDetails?: ITransferDetails;
+  recipient?: string;
+  paymentMethod?: string;
+  notes?: string;
   __v: number;
 }
 
@@ -386,6 +411,150 @@ function TransactionDetailsModal({
                   </div>
                 </div>
               )}
+              {transaction.chequeDetails && (
+                <div className="pt-4 border-t">
+                  <h4 className="text-sm font-medium text-muted-foreground mb-1.5">
+                    Cheque Details
+                  </h4>
+                  <div className="bg-zinc-50 dark:bg-zinc-900 p-3 rounded-lg border space-y-2">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Cheque Number:
+                      </p>
+                      <p className="text-base">
+                        {transaction.chequeDetails.chequeNumber}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Date:
+                      </p>
+                      <p className="text-base">
+                        {new Date(
+                          transaction.chequeDetails.date
+                        ).toLocaleDateString("en-US")}
+                      </p>
+                    </div>
+                    {transaction.chequeDetails.description && (
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium text-muted-foreground">
+                          Description:
+                        </p>
+                        <p className="text-base">
+                          {transaction.chequeDetails.description}
+                        </p>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Front Image:
+                      </p>
+                      {transaction.chequeDetails.frontImage && (
+                        <a
+                          href={transaction.chequeDetails.frontImage}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline text-blue-600"
+                        >
+                          View
+                        </a>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Back Image:
+                      </p>
+                      {transaction.chequeDetails.backImage && (
+                        <a
+                          href={transaction.chequeDetails.backImage}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline text-blue-600"
+                        >
+                          View
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              {transaction.transferDetails && (
+                <div className="pt-4 border-t">
+                  <h4 className="text-sm font-medium text-muted-foreground mb-1.5">
+                    Transfer Details
+                  </h4>
+                  <div className="bg-zinc-50 dark:bg-zinc-900 p-3 rounded-lg border space-y-2">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Account Name:
+                      </p>
+                      <p className="text-base">
+                        {transaction.transferDetails.accountName}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Account Number:
+                      </p>
+                      <p className="text-base">
+                        {transaction.transferDetails.accountNumber}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Bank Name:
+                      </p>
+                      <p className="text-base">
+                        {transaction.transferDetails.bankName}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Country:
+                      </p>
+                      <p className="text-base">
+                        {transaction.transferDetails.country}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        SWIFT Code:
+                      </p>
+                      <p className="text-base">
+                        {transaction.transferDetails.swiftCode}
+                      </p>
+                    </div>
+                    {transaction.transferDetails.iban && (
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium text-muted-foreground">
+                          IBAN:
+                        </p>
+                        <p className="text-base">
+                          {transaction.transferDetails.iban}
+                        </p>
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-muted-foreground">
+                        Bank Address:
+                      </p>
+                      <p className="text-base">
+                        {transaction.transferDetails.bankAddress}
+                      </p>
+                    </div>
+                    {transaction.transferDetails.description && (
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium text-muted-foreground">
+                          Description:
+                        </p>
+                        <p className="text-base">
+                          {transaction.transferDetails.description}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </ScrollArea>
           <div className="flex items-center justify-between p-4 border-t bg-zinc-50 dark:bg-zinc-900">
@@ -472,6 +641,132 @@ export function ActivityTable() {
           ),
         };
 
+        // Professional details rendering
+        let details: React.ReactNode = null;
+        switch (transaction.type) {
+          case TransactionType.TRANSFER:
+            details = (
+              <>
+                {transaction.transferDetails?.accountName && (
+                  <span>
+                    To:{" "}
+                    <span className="font-medium">
+                      {transaction.transferDetails.accountName}
+                    </span>
+                    {transaction.transferDetails.accountNumber && (
+                      <span className="ml-1 text-[10px] text-muted-foreground">
+                        ({transaction.transferDetails.accountNumber})
+                      </span>
+                    )}
+                  </span>
+                )}
+                {!transaction.transferDetails?.accountName &&
+                  transaction.recipient && (
+                    <span>
+                      To:{" "}
+                      <span className="font-medium">
+                        {transaction.recipient}
+                      </span>
+                    </span>
+                  )}
+              </>
+            );
+            break;
+          case TransactionType.DEPOSIT:
+            details = (
+              <>
+                {transaction.paymentMethod && (
+                  <span>
+                    Method:{" "}
+                    <span className="font-medium">
+                      {transaction.paymentMethod}
+                    </span>
+                  </span>
+                )}
+                {transaction.notes && (
+                  <span className="block">
+                    Note:{" "}
+                    <span className="font-medium">{transaction.notes}</span>
+                  </span>
+                )}
+              </>
+            );
+            break;
+          case TransactionType.CRYPTO_DEPOSIT:
+            details = (
+              <>
+                {transaction.cryptoDetails?.walletAddress && (
+                  <span>
+                    Wallet:{" "}
+                    <span className="font-medium">
+                      {transaction.cryptoDetails.walletAddress}
+                    </span>
+                  </span>
+                )}
+                {transaction.cryptoDetails?.network && (
+                  <span className="block">
+                    Network:{" "}
+                    <span className="font-medium">
+                      {transaction.cryptoDetails.network}
+                    </span>
+                  </span>
+                )}
+              </>
+            );
+            break;
+          case TransactionType.CHEQUE_DEPOSIT:
+            details = (
+              <>
+                {transaction.chequeDetails?.chequeNumber && (
+                  <span>
+                    Cheque #:{" "}
+                    <span className="font-medium">
+                      {transaction.chequeDetails.chequeNumber}
+                    </span>
+                  </span>
+                )}
+                {transaction.chequeDetails?.description && (
+                  <span className="block">
+                    {transaction.chequeDetails.description}
+                  </span>
+                )}
+              </>
+            );
+            break;
+          case TransactionType.PAYMENT:
+            details = (
+              <>
+                {transaction.recipient && (
+                  <span>
+                    To:{" "}
+                    <span className="font-medium">{transaction.recipient}</span>
+                  </span>
+                )}
+                {transaction.notes && (
+                  <span className="block">
+                    Note:{" "}
+                    <span className="font-medium">{transaction.notes}</span>
+                  </span>
+                )}
+              </>
+            );
+            break;
+          case TransactionType.LOAN_PAYMENT:
+            details = (
+              <>
+                {transaction.notes && (
+                  <span>
+                    Note:{" "}
+                    <span className="font-medium">{transaction.notes}</span>
+                  </span>
+                )}
+              </>
+            );
+            break;
+          default:
+            details = null;
+        }
+
         return (
           <div className="flex items-center gap-3">
             <div
@@ -488,6 +783,11 @@ export function ActivityTable() {
               <p className="text-xs text-muted-foreground">
                 {transaction.user.firstName} {transaction.user.lastName}
               </p>
+              {details && (
+                <div className="text-[11px] leading-tight text-muted-foreground mt-0.5">
+                  {details}
+                </div>
+              )}
             </div>
           </div>
         );
@@ -777,6 +1077,124 @@ export function ActivityTable() {
       currency: transaction.currency.name.includes("USDT") ? "USD" : "USD",
     }).format(transaction.amount);
 
+    // Professional details rendering (same logic as table cell)
+    let details: React.ReactNode = null;
+    switch (transaction.type) {
+      case TransactionType.TRANSFER:
+        details = (
+          <>
+            {transaction.transferDetails?.accountName && (
+              <span>
+                To:{" "}
+                <span className="font-medium">
+                  {transaction.transferDetails.accountName}
+                </span>
+                {transaction.transferDetails.accountNumber && (
+                  <span className="ml-1 text-[10px] text-muted-foreground">
+                    ({transaction.transferDetails.accountNumber})
+                  </span>
+                )}
+              </span>
+            )}
+            {!transaction.transferDetails?.accountName &&
+              transaction.recipient && (
+                <span>
+                  To:{" "}
+                  <span className="font-medium">{transaction.recipient}</span>
+                </span>
+              )}
+          </>
+        );
+        break;
+      case TransactionType.DEPOSIT:
+        details = (
+          <>
+            {transaction.paymentMethod && (
+              <span>
+                Method:{" "}
+                <span className="font-medium">{transaction.paymentMethod}</span>
+              </span>
+            )}
+            {transaction.notes && (
+              <span className="block">
+                Note: <span className="font-medium">{transaction.notes}</span>
+              </span>
+            )}
+          </>
+        );
+        break;
+      case TransactionType.CRYPTO_DEPOSIT:
+        details = (
+          <>
+            {transaction.cryptoDetails?.walletAddress && (
+              <span>
+                Wallet:{" "}
+                <span className="font-medium">
+                  {transaction.cryptoDetails.walletAddress}
+                </span>
+              </span>
+            )}
+            {transaction.cryptoDetails?.network && (
+              <span className="block">
+                Network:{" "}
+                <span className="font-medium">
+                  {transaction.cryptoDetails.network}
+                </span>
+              </span>
+            )}
+          </>
+        );
+        break;
+      case TransactionType.CHEQUE_DEPOSIT:
+        details = (
+          <>
+            {transaction.chequeDetails?.chequeNumber && (
+              <span>
+                Cheque #:{" "}
+                <span className="font-medium">
+                  {transaction.chequeDetails.chequeNumber}
+                </span>
+              </span>
+            )}
+            {transaction.chequeDetails?.description && (
+              <span className="block">
+                {transaction.chequeDetails.description}
+              </span>
+            )}
+          </>
+        );
+        break;
+      case TransactionType.PAYMENT:
+        details = (
+          <>
+            {transaction.recipient && (
+              <span>
+                To: <span className="font-medium">{transaction.recipient}</span>
+              </span>
+            )}
+            {transaction.notes && (
+              <span className="block">
+                Note: <span className="font-medium">{transaction.notes}</span>
+              </span>
+            )}
+          </>
+        );
+        break;
+      case TransactionType.LOAN_PAYMENT:
+        details = (
+          <>
+            {transaction.notes && (
+              <span>
+                Note: <span className="font-medium">{transaction.notes}</span>
+              </span>
+            )}
+          </>
+        );
+        break;
+      default:
+        details = null;
+    }
+
     return (
       <div
         key={transaction._id}
@@ -799,6 +1217,11 @@ export function ActivityTable() {
               <p className="text-xs text-muted-foreground">
                 {transaction.user.firstName} {transaction.user.lastName}
               </p>
+              {details && (
+                <div className="text-[11px] leading-tight text-muted-foreground mt-0.5">
+                  {details}
+                </div>
+              )}
             </div>
           </div>
           <Badge
