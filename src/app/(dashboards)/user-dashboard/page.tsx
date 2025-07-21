@@ -7,16 +7,13 @@ import { TransactionChart } from "../../../components/user-dashboard/transaction
 import { ActivityTable } from "../../../components/user-dashboard/activity-table";
 import { HiArrowCircleUp } from "react-icons/hi";
 import { IoMdListBox } from "react-icons/io";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ArrowRightIcon } from "lucide-react";
 import { AppHeader } from "@/components/app-header";
 import FundsTransferModal from "../../../components/user-dashboard/funds-transfer";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "@/contexts/UserContext";
-import { format } from 'date-fns';
+import { format } from "date-fns";
 import FundsDepositModal from "@/components/user-dashboard/funds-deposit";
 import Link from "next/link";
 import { api } from "@/api/axios";
@@ -36,13 +33,16 @@ export default function Page() {
   const [outflow, setOutflow] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [chartData, setChartData] = useState<
+    { month: string; inflow: number; outflow: number }[]
+  >([]);
 
   const formatCardNumber = (number: string) => {
-    return number.replace(/(\d{4})/g, '$1 ').trim();
+    return number.replace(/(\d{4})/g, "$1 ").trim();
   };
 
   const formatExpiryDate = (date?: Date) => {
-    return date ? format(new Date(date), 'MM/yy') : 'N/A';
+    return date ? format(new Date(date), "MM/yy") : "N/A";
   };
 
   const formatCurrency = (amount: number) => {
@@ -56,23 +56,71 @@ export default function Page() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await api.get<{ transactions: Transaction[] }>("/transactions");
+      const response = await api.get<{ transactions: Transaction[] }>(
+        "/transactions"
+      );
       const transactions = response.data.transactions;
 
       // Calculate Inflow (Deposits)
       const depositTotal = transactions
-        .filter(tx => tx.type === TransactionType.DEPOSIT ||
-          tx.type === TransactionType.CRYPTO_DEPOSIT ||
-          tx.type === TransactionType.CHEQUE_DEPOSIT)
+        .filter(
+          (tx) =>
+            tx.type === TransactionType.DEPOSIT ||
+            tx.type === TransactionType.CRYPTO_DEPOSIT ||
+            tx.type === TransactionType.CHEQUE_DEPOSIT
+        )
         .reduce((sum, tx) => sum + tx.amount, 0);
 
       // Calculate Outflow (Transfers)
       const transferTotal = transactions
-        .filter(tx => tx.type === TransactionType.TRANSFER)
+        .filter((tx) => tx.type === TransactionType.TRANSFER)
         .reduce((sum, tx) => sum + tx.amount, 0);
 
       setInflow(depositTotal);
       setOutflow(transferTotal);
+
+      // Aggregate by month for chart
+      const monthMap: Record<string, { inflow: number; outflow: number }> = {};
+      transactions.forEach((tx) => {
+        const date = new Date(tx.createdAt);
+        const month = date.toLocaleString("default", { month: "short" });
+        if (!monthMap[month]) monthMap[month] = { inflow: 0, outflow: 0 };
+        if (
+          tx.type === TransactionType.DEPOSIT ||
+          tx.type === TransactionType.CRYPTO_DEPOSIT ||
+          tx.type === TransactionType.CHEQUE_DEPOSIT
+        ) {
+          monthMap[month].inflow += tx.amount;
+        } else if (tx.type === TransactionType.TRANSFER) {
+          monthMap[month].outflow += tx.amount;
+        }
+      });
+      // Sort months by calendar order
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+      const chartArr = months
+        .map((m) =>
+          monthMap[m]
+            ? { month: m, ...monthMap[m] }
+            : { month: m, inflow: 0, outflow: 0 }
+        )
+        .filter(
+          (d, i, arr) =>
+            d.inflow !== 0 || d.outflow !== 0 || i === arr.length - 1
+        ); // show at least last month
+      setChartData(chartArr);
     } catch (err) {
       setError("Failed to fetch transactions data.");
       console.error("Error fetching transactions:", err);
@@ -93,7 +141,7 @@ export default function Page() {
         <div className="flex flex-1 flex-col gap-4 py-4 px-4 md:px-10 pt-0">
           <div className="mt-2 text-xl md:text-2xl flex flex-col lg:flex-row justify-between gap-4">
             <h2>
-              Welcome Back,{' '}
+              Welcome Back,{" "}
               <span className="font-bold">
                 {user?.firstName} {user?.lastName}
               </span>
@@ -125,9 +173,13 @@ export default function Page() {
             <div className="md:col-span-1">
               <BankCard
                 balance={user?.checkingAccount.balance || 0}
-                cardNumber={formatCardNumber(user?.checkingAccount.cardNumber || '0')}
-                expiryDate={formatExpiryDate(user?.checkingAccount.expirationDate)}
-                cvc={user?.checkingAccount.cvc || '000'}
+                cardNumber={formatCardNumber(
+                  user?.checkingAccount.cardNumber || "0"
+                )}
+                expiryDate={formatExpiryDate(
+                  user?.checkingAccount.expirationDate
+                )}
+                cvc={user?.checkingAccount.cvc || "000"}
                 accountName={`${user?.firstName} ${user?.lastName}`.toUpperCase()}
               />
             </div>
@@ -139,7 +191,11 @@ export default function Page() {
                       INFLOW
                     </span>
                     <p className="font-bold text-lg mt-2 mx-auto text-[#04C351]">
-                      {isLoading ? "Loading..." : error ? "Error" : formatCurrency(inflow)}
+                      {isLoading
+                        ? "Loading..."
+                        : error
+                        ? "Error"
+                        : formatCurrency(inflow)}
                     </p>
                   </div>
 
@@ -150,7 +206,11 @@ export default function Page() {
                       OUTFLOW
                     </span>
                     <p className="font-bold text-lg mt-2 mx-auto text-[#515151bc]">
-                      {isLoading ? "Loading..." : error ? "Error" : formatCurrency(outflow)}
+                      {isLoading
+                        ? "Loading..."
+                        : error
+                        ? "Error"
+                        : formatCurrency(outflow)}
                     </p>
                   </div>
                 </div>
@@ -163,7 +223,10 @@ export default function Page() {
                     TRANSACTIONS
                   </Button>
 
-                  <Link href="/user-dashboard/account-statement" className="bg-[#3B3F5C] h-[100%] w-full gap-x-2 text-sm font-semibold flex items-center justify-center rounded-md text-white hover:bg-[#2E3147] transition-colors">
+                  <Link
+                    href="/user-dashboard/account-statement"
+                    className="bg-[#3B3F5C] h-[100%] w-full gap-x-2 text-sm font-semibold flex items-center justify-center rounded-md text-white hover:bg-[#2E3147] transition-colors"
+                  >
                     <IoMdListBox className="size-6" />
                     STATEMENT
                   </Link>
@@ -171,7 +234,7 @@ export default function Page() {
               </div>
             </div>
             <div className="bg-muted/50 aspect-video rounded-xl">
-              <TransactionChart />
+              <TransactionChart data={chartData} />
             </div>
           </div>
           <div className="bg-muted/50 min-h-[50vh] md:min-h-[100vh] flex-1 rounded-xl">

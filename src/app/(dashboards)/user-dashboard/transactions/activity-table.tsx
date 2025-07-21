@@ -622,7 +622,7 @@ export function ActivityTable() {
             <ArrowDownToLine className="h-4 w-4 text-emerald-500" />
           ),
           [TransactionType.CRYPTO_DEPOSIT]: (
-            <Bitcoin className="h-4 w-4 text-orange-500" />
+            <ArrowDownToLine className="h-4 w-4 text-orange-500" />
           ),
           [TransactionType.CHEQUE_DEPOSIT]: (
             <Receipt className="h-4 w-4 text-teal-500" />
@@ -807,20 +807,18 @@ export function ActivityTable() {
       ),
       cell: ({ row }) => {
         const date = row.getValue("createdAt") as string;
-        return (
-          <div className="text-sm">
-            {new Date(date)
-              .toLocaleString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-              })
-              .replace(",", " -")}
-          </div>
-        );
+        // Format: Apr 27, 2024 · 2:15 PM
+        const formattedDate = new Date(date)
+          .toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })
+          .replace(",", " ·");
+        return <div className="text-sm">{formattedDate}</div>;
       },
     },
     {
@@ -837,6 +835,10 @@ export function ActivityTable() {
       ),
       cell: ({ row }) => {
         const transaction = row.original as ITransaction;
+        // Determine if this is a debit (should be red/minus)
+        const isDebit =
+          transaction.type === TransactionType.TRANSFER ||
+          transaction.type === TransactionType.WITHDRAWAL;
         const formatted = new Intl.NumberFormat("en-US", {
           style: "currency",
           currency: transaction.currency.name.includes("USDT") ? "USD" : "USD",
@@ -845,12 +847,12 @@ export function ActivityTable() {
         return (
           <div
             className={`text-sm font-medium ${
-              transaction.amount > 0
-                ? "text-emerald-600 dark:text-emerald-400"
-                : "text-rose-600 dark:text-rose-400"
+              isDebit
+                ? "text-rose-600 dark:text-rose-400"
+                : "text-emerald-600 dark:text-emerald-400"
             }`}
           >
-            {transaction.amount > 0 ? "+" : ""}
+            {isDebit ? "-" : "+"}
             {formatted}
           </div>
         );
@@ -1026,6 +1028,12 @@ export function ActivityTable() {
     pageCount: Math.ceil(filteredData.length / pageSize),
   });
 
+  // Helper to truncate wallet addresses
+  function truncateMiddle(str: string, start: number = 6, end: number = 4) {
+    if (!str || str.length <= start + end) return str;
+    return `${str.slice(0, start)}...${str.slice(-end)}`;
+  }
+
   const renderMobileCard = (transaction: ITransaction) => {
     const statusColors: Record<TransactionStatus, string> = {
       [TransactionStatus.COMPLETED]:
@@ -1072,10 +1080,26 @@ export function ActivityTable() {
       ),
     };
 
+    // Determine if this is a debit (should be red/minus)
+    const isDebit =
+      transaction.type === TransactionType.TRANSFER ||
+      transaction.type === TransactionType.WITHDRAWAL;
     const formattedAmount = new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: transaction.currency.name.includes("USDT") ? "USD" : "USD",
     }).format(transaction.amount);
+
+    // Format: Apr 27, 2024 · 2:15 PM
+    const formattedDate = new Date(transaction.createdAt)
+      .toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })
+      .replace(",", " ·");
 
     // Professional details rendering (same logic as table cell)
     let details: React.ReactNode = null;
@@ -1130,7 +1154,7 @@ export function ActivityTable() {
               <span>
                 Wallet:{" "}
                 <span className="font-medium">
-                  {transaction.cryptoDetails.walletAddress}
+                  {truncateMiddle(transaction.cryptoDetails.walletAddress)}
                 </span>
               </span>
             )}
@@ -1226,7 +1250,7 @@ export function ActivityTable() {
           </div>
           <Badge
             variant="outline"
-            className={`px-2 py-0.5 text-[10px] font-medium ${
+            className={`px-2 py-0.5 text-[10px] font-medium whitespace-nowrap max-w-[90px] overflow-hidden text-ellipsis ${
               statusColors[transaction.status]
             }`}
           >
@@ -1235,21 +1259,15 @@ export function ActivityTable() {
           </Badge>
         </div>
         <div className="flex items-center justify-between pt-1.5">
-          <div className="text-xs text-muted-foreground">
-            {new Date(transaction.createdAt).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-              year: "numeric",
-            })}
-          </div>
+          <div className="text-xs text-muted-foreground">{formattedDate}</div>
           <div
             className={`text-sm font-medium ${
-              transaction.amount > 0
-                ? "text-emerald-600 dark:text-emerald-400"
-                : "text-rose-600 dark:text-rose-400"
+              isDebit
+                ? "text-rose-600 dark:text-rose-400"
+                : "text-emerald-600 dark:text-emerald-400"
             }`}
           >
-            {transaction.amount > 0 ? "+" : ""}
+            {isDebit ? "-" : "+"}
             {formattedAmount}
           </div>
         </div>
