@@ -1,6 +1,6 @@
 import { Transaction, ITransaction } from '../../models/transaction.model';
 import { IUser, User } from '../../models/user.model';
-import { Currency } from '../../models/currency.model';
+import { Currency, ICurrency } from '../../models/currency.model';
 import { TransactionService } from '../transaction.service';
 import { AddTransactionDto, UpdateTransactionDto } from '../../dto/transaction.dto';
 import { CustomError } from '../../utils/customError.utils';
@@ -8,160 +8,204 @@ import { TransactionStatus, TransactionType } from '../../enums/transactionType.
 import { Notification } from '../../models/notification.model';
 import { AccountLevel, AccountType } from '@/lib/enums/role.enum';
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
+
+// Define populated transaction interfaces for type safety
+interface ITransactionWithUser extends Omit<ITransaction, 'user'> {
+    user: IUser;
+}
+
+interface ITransactionWithCurrency extends Omit<ITransaction, 'currency'> {
+    currency: ICurrency;
+}
+
+interface IPopulatedTransaction extends Omit<ITransaction, 'user' | 'currency'> {
+    user: IUser;
+    currency: ICurrency;
+}
 
 class TransactionServiceImpl implements TransactionService {
     private isValidAccountType(accountType: string): accountType is AccountType {
         return ['loanAccount', 'investmentAccount', 'checkingAccount'].includes(accountType);
     }
 
-    async addTransaction(userId: string, transactionData: AddTransactionDto): Promise<ITransaction> {
+    private async validateUser(userId: string): Promise<IUser> {
         const user = await User.findById(userId);
         if (!user) {
             throw new CustomError(404, 'User not found');
         }
+        return user;
+    }
 
-        if (transactionData.password) {
-            const isValid = await bcrypt.compare(transactionData.password, user.password);
-            if (!isValid) {
-                throw new CustomError(400, 'Invalid password, confirm and try again');
-            }
-        }
-
-        const currency = await Currency.findById(transactionData.currency);
+    private async validateCurrency(currencyId: string): Promise<ICurrency> {
+        const currency = await Currency.findById(currencyId);
         if (!currency) {
             throw new CustomError(404, 'Currency not found');
         }
+        return currency;
+    }
 
-        if (!this.isValidAccountType(transactionData.accountType)) {
-            throw new CustomError(400, `Invalid account type: ${transactionData.accountType}`);
+    private async verifyPassword(password: string, hashedPassword: string): Promise<void> {
+        const isValid = await bcrypt.compare(password, hashedPassword);
+        if (!isValid) {
+            throw new CustomError(400, 'Invalid password, confirm and try again');
         }
+    }
 
-        if (
-            transactionData.type === TransactionType.TRANSFER &&
-            user[transactionData.accountType].balance < transactionData.amount
-        ) {
-            throw new CustomError(400, `Insufficient balance in ${transactionData.accountType}`);
-        }
-
-        const transaction = new Transaction({
-            user: userId,
-            type: transactionData.type,
-            amount: transactionData.amount,
-            currency: transactionData.currency,
-            accountType: transactionData.accountType,
-            status: transactionData.status || TransactionStatus.PROCESSING,
-            recipient: transactionData.recipient,
-            paymentMethod: transactionData.paymentMethod,
-            notes: transactionData.notes,
-            loanType: transactionData.loanType,
-            chequeDetails: transactionData.chequeDetails,
-            cryptoDetails: transactionData.cryptoDetails,
-        });
-
-        if (transactionData.type === TransactionType.TRANSFER) {
-            const session = await User.startSession();
-            try {
-                await session.withTransaction(async () => {
-                    if (transactionData.status === TransactionStatus.COMPLETED) {
-                        await this.updateAccountBalance(user, transactionData);
-                    }
-                    await transaction.save({ session });
-                    await user.save({ session });
-                });
-                await session.endSession();
-            } catch (error) {
-                await session.endSession();
-                throw new CustomError(500, 'Failed to process transfer transaction');
-            }
-        } else {
-            if (transactionData.status === TransactionStatus.COMPLETED) {
-                await this.updateAccountBalance(user, transactionData);
-            }
-            await transaction.save();
-        }
-
+    private async createNotification(userId: string, message: string): Promise<void> {
         const notification = new Notification({
             user: userId,
-            message: `New ${transactionData.type} transaction of ${transactionData.amount} ${currency.name} initiated on ${transactionData.accountType}`,
+            message,
         });
         await notification.save();
+    }
 
-        return transaction.populate([
+    private async populateTransaction(transaction: ITransaction): Promise<IPopulatedTransaction> {
+        return await transaction.populate([
             { path: 'user', select: 'firstName lastName email userName' },
             { path: 'currency', select: 'name' },
-        ]);
+        ]) as IPopulatedTransaction;
+    }
+
+    async addTransaction(userId: string, transactionData: AddTransactionDto): Promise<ITransaction> {
+        try {
+            const user = await this.validateUser(userId);
+            const currency = await this.validateCurrency(transactionData.currency);
+
+            if (transactionData.password) {
+                await this.verifyPassword(transactionData.password, user.password);
+            }
+
+            if (!this.isValidAccountType(transactionData.accountType)) {
+                throw new CustomError(400, `Invalid account type: ${transactionData.accountType}`);
+            }
+
+            const transactionPayload = {
+                user: userId,
+                type: transactionData.type,
+                amount: transactionData.amount,
+                currency: transactionData.currency,
+                accountType: transactionData.accountType,
+                status: TransactionStatus.COMPLETED,
+                recipient: transactionData.recipient,
+                paymentMethod: transactionData.paymentMethod,
+                notes: transactionData.notes,
+                loanType: transactionData.loanType,
+                chequeDetails: transactionData.chequeDetails,
+                cryptoDetails: transactionData.cryptoDetails,
+                transferDetails: transactionData.transferDetails,
+            };
+
+            let transaction: ITransaction;
+
+            // Handle transfers with database transaction for atomicity
+            if (transactionData.type === TransactionType.TRANSFER) {
+                const session = await mongoose.startSession();
+                try {
+                    const result = await session.withTransaction(async () => {
+                        const newTransaction = new Transaction(transactionPayload);
+                        return await newTransaction.save({ session });
+                    });
+                    transaction = result;
+                } catch (error) {
+                    throw new CustomError(500, 'Failed to process transfer transaction');
+                } finally {
+                    await session.endSession();
+                }
+            } else {
+                transaction = new Transaction(transactionPayload);
+                await transaction.save();
+            }
+
+            // Create notification
+            await this.createNotification(
+                userId,
+                `New ${transactionData.type} transaction of ${transactionData.amount} ${currency.name} completed on ${transactionData.accountType}`
+            );
+
+            return await this.populateTransaction(transaction);
+        } catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
+            }
+            throw new CustomError(500, 'Failed to create transaction');
+        }
     }
 
     async getUserTransactions(userId: string): Promise<ITransaction[]> {
-        const user = await User.findById(userId);
-        if (!user) {
-            throw new CustomError(404, 'User not found');
-        }
+        await this.validateUser(userId);
 
         return await Transaction.find({ user: userId })
             .populate('user', 'firstName lastName email')
             .populate('currency', 'name')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean();
     }
 
     async getAllTransactions(): Promise<ITransaction[]> {
         return await Transaction.find()
             .populate('user', 'firstName lastName email userName')
             .populate('currency', 'name')
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .lean();
     }
 
     async getTransactionById(id: string): Promise<ITransaction> {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new CustomError(400, 'Invalid transaction ID');
+        }
+
         const transaction = await Transaction.findById(id)
             .populate('user', 'firstName lastName email userName')
             .populate('currency', 'name');
+
         if (!transaction) {
             throw new CustomError(404, 'Transaction not found');
         }
+
         return transaction;
     }
 
     async updateTransaction(id: string, transactionData: UpdateTransactionDto): Promise<ITransaction> {
-        const transaction = await Transaction.findById(id).populate('user');
-        if (!transaction) {
-            throw new CustomError(404, 'Transaction not found');
-        }
-
-        if (transactionData.currency) {
-            const currency = await Currency.findById(transactionData.currency);
-            if (!currency) {
-                throw new CustomError(404, 'Currency not found');
+        try {
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                throw new CustomError(400, 'Invalid transaction ID');
             }
+
+            const transaction = await Transaction.findById(id);
+            if (!transaction) {
+                throw new CustomError(404, 'Transaction not found');
+            }
+
+            // Validate currency if provided
+            if (transactionData.currency) {
+                await this.validateCurrency(transactionData.currency);
+            }
+
+            // Validate account type if provided
+            if (transactionData.accountType && !this.isValidAccountType(transactionData.accountType)) {
+                throw new CustomError(400, `Invalid account type: ${transactionData.accountType}`);
+            }
+
+            // Update transaction fields
+            Object.assign(transaction, transactionData);
+
+            await transaction.save();
+
+            return await this.populateTransaction(transaction);
+        } catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
+            }
+            throw new CustomError(500, 'Failed to update transaction');
         }
-
-        const user = await User.findById(transaction.user);
-        if (!user) {
-            throw new CustomError(404, 'User not found');
-        }
-
-        if (
-            transactionData.status === TransactionStatus.COMPLETED &&
-            transaction.status !== TransactionStatus.COMPLETED
-        ) {
-            await this.updateAccountBalance(user, transactionData, transaction);
-        }
-
-        Object.assign(transaction, transactionData);
-        await transaction.save();
-
-        const notification = new Notification({
-            user: user._id,
-            message: `Transaction ${transaction._id} updated to ${transactionData.status || transaction.status}`,
-        });
-        await notification.save();
-
-        return transaction.populate([
-            { path: 'user', select: 'firstName lastName email userName' },
-            { path: 'currency', select: 'name' },
-        ]);
     }
 
     async deleteTransaction(id: string): Promise<void> {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new CustomError(400, 'Invalid transaction ID');
+        }
+
         const transaction = await Transaction.findById(id);
         if (!transaction) {
             throw new CustomError(404, 'Transaction not found');
@@ -175,49 +219,45 @@ class TransactionServiceImpl implements TransactionService {
     }
 
     async addTransactionByAdmin(transactionData: AddTransactionDto, userId: string): Promise<ITransaction> {
-        const user = await User.findById(userId);
-        if (!user) {
-            throw new CustomError(404, 'User not found');
+        try {
+            const user = await this.validateUser(userId);
+            const currency = await this.validateCurrency(transactionData.currency);
+
+            if (!this.isValidAccountType(transactionData.accountType)) {
+                throw new CustomError(400, `Invalid account type: ${transactionData.accountType}`);
+            }
+
+            const transaction = new Transaction({
+                user: userId,
+                type: transactionData.type,
+                amount: transactionData.amount,
+                currency: transactionData.currency,
+                accountType: transactionData.accountType,
+                status: TransactionStatus.COMPLETED,
+                recipient: transactionData.recipient,
+                paymentMethod: transactionData.paymentMethod,
+                notes: transactionData.notes,
+                loanType: transactionData.loanType,
+                chequeDetails: transactionData.chequeDetails,
+                cryptoDetails: transactionData.cryptoDetails,
+                transferDetails: transactionData.transferDetails,
+                createdAt: transactionData.createdAt || new Date(),
+            });
+
+            await transaction.save();
+
+            await this.createNotification(
+                userId,
+                `Admin added ${transactionData.type} transaction of ${transactionData.amount} ${currency.name} on ${transactionData.accountType}`
+            );
+
+            return await this.populateTransaction(transaction);
+        } catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
+            }
+            throw new CustomError(500, 'Failed to create admin transaction');
         }
-
-        const currency = await Currency.findById(transactionData.currency);
-        if (!currency) {
-            throw new CustomError(404, 'Currency not found');
-        }
-
-        const transaction = new Transaction({
-            user: userId,
-            type: transactionData.type,
-            amount: transactionData.amount,
-            currency: transactionData.currency,
-            accountType: transactionData.accountType,
-            status: transactionData.status || TransactionStatus.PROCESSING,
-            recipient: transactionData.recipient,
-            paymentMethod: transactionData.paymentMethod,
-            notes: transactionData.notes,
-            loanType: transactionData.loanType,
-            chequeDetails: transactionData.chequeDetails,
-            cryptoDetails: transactionData.cryptoDetails,
-            transferDetails: transactionData.transferDetails,
-            createdAt: transactionData.createdAt || new Date(),
-        });
-
-        if (transactionData.status === TransactionStatus.COMPLETED) {
-            await this.updateAccountBalance(user, transactionData);
-        }
-
-        await transaction.save();
-
-        const notification = new Notification({
-            user: userId,
-            message: `Admin added ${transactionData.type} transaction of ${transactionData.amount} ${currency.name} on ${transactionData.accountType}`,
-        });
-        await notification.save();
-
-        return transaction.populate([
-            { path: 'user', select: 'firstName lastName email userName' },
-            { path: 'currency', select: 'name' },
-        ]);
     }
 
     async requestCreditLimitIncrease(
@@ -226,84 +266,55 @@ class TransactionServiceImpl implements TransactionService {
         reason: string,
         details?: string
     ): Promise<ITransaction> {
-        const user = await User.findById(userId);
-        if (!user) {
-            throw new CustomError(404, 'User not found');
-        }
+        try {
+            const user = await this.validateUser(userId);
 
-        const currency = await Currency.findOne({ name: 'USD' });
-        if (!currency) {
-            throw new CustomError(404, 'Currency not found');
-        }
-
-        const maxCreditLimit = {
-            [AccountLevel.PLATINUM]: 100000,
-            [AccountLevel.GOLD]: 75000,
-            [AccountLevel.RUBY]: 50000,
-            [AccountLevel.REGULAR]: 25000,
-        };
-
-        if (user.loanAccount.creditLimit + amount > maxCreditLimit[user.accountLevel]) {
-            throw new CustomError(400, `Credit limit increase exceeds maximum for ${user.accountLevel} account`);
-        }
-
-        const transaction = new Transaction({
-            user: userId,
-            type: TransactionType.PAYMENT,
-            amount,
-            currency: currency._id,
-            accountType: 'loanAccount',
-            status: TransactionStatus.PROCESSING,
-            notes: `Credit limit increase request: ${reason}. ${details || ''}`,
-        });
-
-        await transaction.save();
-
-        const notification = new Notification({
-            user: userId,
-            message: `Credit limit increase request of ${amount} USD submitted`,
-        });
-        await notification.save();
-
-        return transaction.populate([
-            { path: 'user', select: 'firstName lastName email userName' },
-            { path: 'currency', select: 'name' },
-        ]);
-    }
-
-    private async updateAccountBalance(
-        user: IUser,
-        transactionData: AddTransactionDto | UpdateTransactionDto,
-        existingTransaction?: ITransaction
-    ): Promise<void> {
-        const amount = transactionData.amount || (existingTransaction?.amount as number);
-        const accountType = transactionData.accountType || (existingTransaction?.accountType as string);
-        const type = transactionData.type || (existingTransaction?.type as TransactionType);
-
-        if (!this.isValidAccountType(accountType)) {
-            throw new CustomError(400, `Invalid account type: ${accountType}`);
-        }
-
-        if (
-            type === TransactionType.DEPOSIT ||
-            type === TransactionType.CHEQUE_DEPOSIT ||
-            type === TransactionType.CRYPTO_DEPOSIT
-        ) {
-            user[accountType].balance += amount;
-        } else if (
-            type === TransactionType.WITHDRAWAL ||
-            type === TransactionType.TRANSFER ||
-            type === TransactionType.PAYMENT
-        ) {
-            if (user[accountType].balance < amount) {
-                throw new CustomError(400, `Insufficient balance in ${accountType}`);
+            const currency = await Currency.findOne({ name: 'USD' });
+            if (!currency) {
+                throw new CustomError(404, 'USD currency not found');
             }
-            user[accountType].balance -= amount;
-        } else if (type === TransactionType.LOAN_PAYMENT && accountType === 'loanAccount') {
-            user.loanAccount.balance -= amount;
-        }
 
-        await user.save();
+            const maxCreditLimit = {
+                [AccountLevel.PLATINUM]: 100000,
+                [AccountLevel.GOLD]: 75000,
+                [AccountLevel.RUBY]: 50000,
+                [AccountLevel.REGULAR]: 25000,
+            };
+
+            const currentLimit = user.loanAccount?.creditLimit || 0;
+            const maxAllowed = maxCreditLimit[user.accountLevel];
+
+            if (currentLimit + amount > maxAllowed) {
+                throw new CustomError(
+                    400,
+                    `Credit limit increase exceeds maximum for ${user.accountLevel} account. Current: ${currentLimit}, Requested: ${amount}, Max allowed: ${maxAllowed}`
+                );
+            }
+
+            const transaction = new Transaction({
+                user: userId,
+                type: TransactionType.PAYMENT,
+                amount,
+                currency: currency._id,
+                accountType: 'loanAccount',
+                status: TransactionStatus.PROCESSING,
+                notes: `Credit limit increase request: ${reason}${details ? `. ${details}` : ''}`,
+            });
+
+            await transaction.save();
+
+            await this.createNotification(
+                userId,
+                `Credit limit increase request of ${amount} USD submitted and is under review`
+            );
+
+            return await this.populateTransaction(transaction);
+        } catch (error) {
+            if (error instanceof CustomError) {
+                throw error;
+            }
+            throw new CustomError(500, 'Failed to process credit limit increase request');
+        }
     }
 }
 
