@@ -2,7 +2,7 @@ import { IUser, User } from '@/lib/models/user.model';
 import { UserService } from '../user.service';
 import bcrypt from 'bcryptjs';
 import { CustomError } from '@/lib/utils/customError.utils';
-import { ChangePasswordDto } from '@/lib/dto/user.dto';
+import { ChangePasswordDto, UpdateProfileDto, UpdateProfilePictureDto } from '@/lib/dto/user.dto';
 import { UpdateUserDto } from '@/lib/dto/admin.dto';
 import { AccountStatus } from '@/lib/enums/accountStatus.enum';
 import { Transaction } from '@/lib/models/transaction.model';
@@ -144,6 +144,74 @@ class UserServiceImpl implements UserService {
 
         await user.save();
         return user;
+    }
+
+    async updateProfile(userId: string, profileData: UpdateProfileDto): Promise<IUser> {
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new CustomError(404, 'User not found');
+        }
+
+        // Update only allowed fields
+        type ProfileFields = 'firstName' | 'lastName' | 'phoneNumber' | 'address' |
+            'city' | 'state' | 'postalCode' | 'country';
+
+        // Then use it like this:
+        const allowedFields: ProfileFields[] = [
+            'firstName', 'lastName', 'phoneNumber', 'address',
+            'city', 'state', 'postalCode', 'country'
+        ];
+
+        allowedFields.forEach((field: ProfileFields) => {
+            if (profileData[field] !== undefined) {
+                user[field] = profileData[field] as IUser[ProfileFields];
+            }
+        });
+
+        await user.save();
+        return user;
+    }
+
+    async updateProfilePicture(userId: string, pictureData: UpdateProfilePictureDto): Promise<IUser> {
+        const user = await User.findById(userId);
+        if (!user) {
+            throw new CustomError(404, 'User not found');
+        }
+
+        // Validate URL
+        try {
+            new URL(pictureData.url);
+        } catch (err) {
+            throw new CustomError(400, 'Invalid profile picture URL');
+        }
+        console.log("This is the picture data", pictureData);
+
+        // Update profile picture
+        user.profilePicture = {
+            url: pictureData.url,
+            publicId: pictureData.publicId,
+            uploadedAt: new Date()
+        };
+
+        console.log("This is the user", user);
+
+        const updatedUser = await user.save();
+        console.log("This is the user", user);
+        return updatedUser;
+    }
+
+    async removeProfilePicture(userId: string): Promise<IUser> {
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            { $unset: { profilePicture: 1 } },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            throw new CustomError(404, 'User not found');
+        }
+
+        return updatedUser;
     }
 }
 

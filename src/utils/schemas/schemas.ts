@@ -57,6 +57,7 @@ export const ProfileSchema = z.object({
     state: z.string().min(1, 'State is required'),
     postalCode: z.string().min(1, 'ZIP code is required'),
     country: z.string().min(1, 'Country is required'),
+    profilePicture: z.string().url('Invalid profile picture URL').optional(),
 });
 
 export const PasswordSchema = z

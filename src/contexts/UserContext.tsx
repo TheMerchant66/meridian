@@ -12,9 +12,10 @@ interface LoginData {
 
 interface UserContextType {
     accessToken: string | null;
-    user: IUser | null; 
+    user: IUser | null;
     login: (data: LoginData) => void;
     logout: () => void;
+    updateUser: (userData: Partial<IUser>) => void;
     loading: boolean;
 }
 
@@ -32,6 +33,7 @@ export const UserContext = createContext<UserContextType>({
     user: null,
     login: () => { },
     logout: () => { },
+    updateUser: () => { },
     loading: true
 });
 
@@ -78,8 +80,23 @@ const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         router.push('/login');
     };
 
+    const updateUser = (userData: Partial<IUser>) => {
+        if (user) {
+            const updatedUser = { ...user, ...userData } as IUser;
+            setUser(updatedUser);
+
+            // Update cookie with new user data
+            const accessTokenExpiration = new Date(new Date().getTime() + 3 * 24 * 60 * 60 * 1000);
+            Cookies.set('userDataStellarOne', JSON.stringify(updatedUser), {
+                expires: accessTokenExpiration,
+                secure: true,
+                sameSite: 'Strict',
+            });
+        }
+    };
+
     return (
-        <UserContext.Provider value={{ accessToken, user, login, logout, loading }}>
+        <UserContext.Provider value={{ accessToken, user, login, logout, updateUser, loading }}>
             {children}
         </UserContext.Provider>
     );

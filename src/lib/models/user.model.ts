@@ -2,6 +2,12 @@ import mongoose, { Document, Schema, Model } from 'mongoose';
 import { AccountLevel, Role } from '../enums/role.enum';
 import { AccountStatus } from '../enums/accountStatus.enum';
 
+export interface IProfilePicture {
+    url: string;
+    publicId?: string;
+    uploadedAt: Date;
+}
+
 export interface IUser extends Document {
     firstName: string;
     lastName: string;
@@ -16,6 +22,7 @@ export interface IUser extends Document {
     state: string;
     postalCode: string;
     country: string;
+    profilePicture?: IProfilePicture | null;
     role: Role;
     accountLevel: AccountLevel;
     accountStatus: AccountStatus;
@@ -46,6 +53,12 @@ export interface IUserWithId extends IUser {
     _id: string;
 }
 
+const ProfilePictureSchema = new Schema({
+    url: { type: String, required: true },
+    publicId: { type: String },
+    uploadedAt: { type: Date, default: Date.now }
+}, { _id: false });
+
 const UserSchema: Schema<IUser> = new Schema(
     {
         firstName: { type: String, required: true },
@@ -61,6 +74,10 @@ const UserSchema: Schema<IUser> = new Schema(
         state: { type: String, required: true },
         postalCode: { type: String, required: true },
         country: { type: String, required: true },
+        profilePicture: {
+            type: ProfilePictureSchema,
+            default: null
+        },
         role: { type: String, enum: Role, required: true, default: Role.USER },
         accountLevel: { type: String, enum: AccountLevel, required: true, default: AccountLevel.REGULAR },
         accountStatus: { type: String, enum: AccountStatus, required: true, default: AccountStatus.ACTIVE },
