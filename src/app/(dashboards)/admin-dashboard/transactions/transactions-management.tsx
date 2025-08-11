@@ -60,6 +60,7 @@ export function TransactionsManagement() {
     setIsLoading(true)
     try {
       const response = await api.get('/transactions?admin=true')
+      console.log("This is the response", response)
       setTransactions(response.data.transactions)
     } catch (error: any) {
       toast({

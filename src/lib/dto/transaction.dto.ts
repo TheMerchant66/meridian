@@ -141,7 +141,7 @@ export class UpdateTransactionDto {
     loanType?: LoanType;
     chequeDetails?: {
         chequeNumber?: string;
-        date?: Date;
+        date?: Date | string; // allow string from client
         description?: string;
         frontImage?: string;
         backImage?: string;
@@ -168,21 +168,21 @@ export class UpdateTransactionDto {
         currency: Joi.string(),
         accountType: Joi.string().valid('loanAccount', 'investmentAccount', 'checkingAccount'),
         status: Joi.string().valid(...Object.values(TransactionStatus)),
-        recipient: Joi.string(),
-        paymentMethod: Joi.string(),
-        notes: Joi.string(),
+        recipient: Joi.string().max(100),
+        paymentMethod: Joi.string().max(50),
+        notes: Joi.string().max(500),
         loanType: Joi.string().valid(...Object.values(LoanType)),
         chequeDetails: Joi.object({
             chequeNumber: Joi.string(),
-            date: Joi.date(),
+            date: Joi.alternatives().try(Joi.date().iso(), Joi.string().isoDate()),
             description: Joi.string(),
-            frontImage: Joi.string(),
-            backImage: Joi.string(),
+            frontImage: Joi.string().uri(),
+            backImage: Joi.string().uri(),
         }),
         cryptoDetails: Joi.object({
             network: Joi.string(),
             walletAddress: Joi.string(),
-            proofOfPayment: Joi.string(),
+            proofOfPayment: Joi.string().uri(),
         }),
         transferDetails: Joi.object({
             accountName: Joi.string(),
@@ -194,53 +194,32 @@ export class UpdateTransactionDto {
             bankAddress: Joi.string(),
             description: Joi.string().allow(''),
         }),
+    }).options({
+        abortEarly: false,
+        stripUnknown: true,
+        convert: true, // convert strings to Date/Number where applicable
     });
 
-    constructor(data: {
-        type?: TransactionType;
-        amount?: number;
-        currency?: string;
-        accountType?: 'loanAccount' | 'investmentAccount' | 'checkingAccount';
-        status?: TransactionStatus;
-        recipient?: string;
-        paymentMethod?: string;
-        notes?: string;
-        loanType?: LoanType;
-        chequeDetails?: {
-            chequeNumber?: string;
-            date?: Date;
-            description?: string;
-            frontImage?: string;
-            backImage?: string;
+    constructor(data: Partial<UpdateTransactionDto> = {}) {
+        // Only assign keys that were actually provided
+        const assignIfPresent = <K extends keyof UpdateTransactionDto>(key: K) => {
+            if (data[key] !== undefined) (this as any)[key] = data[key];
         };
-        cryptoDetails?: {
-            network?: string;
-            walletAddress?: string;
-            proofOfPayment?: string;
-        };
-        transferDetails?: {
-            accountName?: string;
-            accountNumber?: string;
-            bankName?: string;
-            country?: string;
-            swiftCode?: string;
-            iban?: string;
-            bankAddress?: string;
-            description?: string;
-        };
-    }) {
-        this.type = data.type;
-        this.amount = data.amount;
-        this.currency = data.currency;
-        this.accountType = data.accountType;
-        this.status = data.status;
-        this.recipient = data.recipient;
-        this.paymentMethod = data.paymentMethod;
-        this.notes = data.notes;
-        this.loanType = data.loanType;
-        this.chequeDetails = data.chequeDetails;
-        this.cryptoDetails = data.cryptoDetails;
-        this.transferDetails = data.transferDetails;
+
+        assignIfPresent('type');
+        assignIfPresent('amount');
+        assignIfPresent('currency');
+        assignIfPresent('accountType');
+        assignIfPresent('status');
+        assignIfPresent('recipient');
+        assignIfPresent('paymentMethod');
+        assignIfPresent('notes');
+        assignIfPresent('loanType');
+
+        // Nested
+        assignIfPresent('chequeDetails');
+        assignIfPresent('cryptoDetails');
+        assignIfPresent('transferDetails');
     }
 }
 

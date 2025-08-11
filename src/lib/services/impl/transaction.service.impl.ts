@@ -8,6 +8,19 @@ import { TransactionStatus, TransactionType } from '../../enums/transactionType.
 import { Notification } from '../../models/notification.model';
 import { AccountLevel, AccountType } from '@/lib/enums/role.enum';
 import bcrypt from 'bcryptjs';
+import { deepPrune, isPlainObject } from '@/utils/sanitize';
+
+function deepMerge(target: any, src: any) {
+    for (const [k, v] of Object.entries(src)) {
+        if (isPlainObject(v)) {
+            if (!isPlainObject(target[k])) target[k] = {};
+            deepMerge(target[k], v);
+        } else {
+            target[k] = v;
+        }
+    }
+    return target;
+}
 
 class TransactionServiceImpl implements TransactionService {
     private isValidAccountType(accountType: string): accountType is AccountType {
@@ -115,82 +128,69 @@ class TransactionServiceImpl implements TransactionService {
 
     async updateTransaction(id: string, transactionData: UpdateTransactionDto): Promise<ITransaction> {
         const transaction = await Transaction.findById(id).populate('user');
-        if (!transaction) {
-            throw new CustomError(404, 'Transaction not found');
-        }
+        if (!transaction) throw new CustomError(404, 'Transaction not found');
 
+        // Validate currency id if provided
         if (transactionData.currency) {
             const currency = await Currency.findById(transactionData.currency);
-            if (!currency) {
-                throw new CustomError(404, 'Currency not found');
-            }
+            if (!currency) throw new CustomError(404, 'Currency not found');
         }
 
         const user = await User.findById(transaction.user);
-        if (!user) {
-            throw new CustomError(404, 'User not found');
-        }
+        if (!user) throw new CustomError(404, 'User not found');
 
-        // Check if status is being changed to COMPLETED
+        const sanitized = deepPrune(transactionData);
+
+        // Compute status transitions before mutating doc
         const isStatusChangingToCompleted =
-            transactionData.status === TransactionStatus.COMPLETED &&
+            sanitized.status === TransactionStatus.COMPLETED &&
             transaction.status !== TransactionStatus.COMPLETED;
 
-        // Check if status is being changed from COMPLETED to something else
         const isStatusChangingFromCompleted =
             transaction.status === TransactionStatus.COMPLETED &&
-            transactionData.status &&
-            transactionData.status !== TransactionStatus.COMPLETED;
+            sanitized.status &&
+            sanitized.status !== TransactionStatus.COMPLETED;
 
-        // Prevent changing completed transactions unless explicitly allowed
+        // Guard completed transactions (allow only specific fields)
         if (transaction.status === TransactionStatus.COMPLETED && !isStatusChangingFromCompleted) {
-            // Allow minor updates to completed transactions (like notes, recipient)
-            const allowedUpdates: (keyof UpdateTransactionDto)[] = ['notes', 'recipient', 'paymentMethod'];
-            const updateKeys = Object.keys(transactionData) as (keyof UpdateTransactionDto)[];
-
-            const hasDisallowedUpdates = updateKeys.some(
-                key => !allowedUpdates.includes(key) &&
-                    transactionData[key] !== undefined &&
-                    transactionData[key] !== null
-            );
-
-            if (hasDisallowedUpdates) {
-                const disallowedFields = updateKeys.filter(
-                    key => !allowedUpdates.includes(key) &&
-                        transactionData[key] !== undefined &&
-                        transactionData[key] !== null
-                );
+            const allowed: (keyof UpdateTransactionDto)[] = ['notes', 'recipient', 'paymentMethod'];
+            const keys = Object.keys(sanitized) as (keyof UpdateTransactionDto)[];
+            const disallowed = keys.filter(k => !allowed.includes(k));
+            if (disallowed.length) {
                 throw new CustomError(
                     400,
-                    `Cannot modify critical details of completed transactions. Attempted to modify: ${disallowedFields.join(', ')}`
+                    `Cannot modify critical details of completed transactions. Attempted to modify: ${disallowed.join(', ')}`
                 );
             }
         }
 
-        // Use database transaction for consistency
         const session = await User.startSession();
         try {
             await session.withTransaction(async () => {
-                // Handle status change to COMPLETED
+                // Balance updates
                 if (isStatusChangingToCompleted) {
-                    const transactionForBalance = {
-                        ...transactionData,
-                        amount: transactionData.amount || transaction.amount,
-                        type: transactionData.type || transaction.type,
-                        accountType: transactionData.accountType || transaction.accountType
+                    const txForBalance = {
+                        amount: sanitized.amount ?? transaction.amount,
+                        type: sanitized.type ?? transaction.type,
+                        accountType: sanitized.accountType ?? transaction.accountType,
                     };
-
-                    await this.validateTransactionBalance(user, transactionForBalance);
-                    await this.processAccountBalanceUpdate(user, transactionForBalance, session);
+                    await this.validateTransactionBalance(user, txForBalance);
+                    await this.processAccountBalanceUpdate(user, txForBalance, session);
                 }
 
-                // Handle status change from COMPLETED (reversal)
                 if (isStatusChangingFromCompleted) {
                     await this.reverseAccountBalanceUpdate(user, transaction, session);
                 }
 
-                // Update transaction with new data
-                Object.assign(transaction, transactionData);
+                // Merge sanitized fields into the doc safely (no undefineds)
+                deepMerge(transaction, sanitized);
+
+                // Normalize known date inputs if provided as strings
+                if (sanitized.chequeDetails?.date) {
+                    // Accept "yyyy-MM-dd" or ISO strings
+                    transaction.set('chequeDetails.date', new Date(String(sanitized.chequeDetails.date)));
+                }
+
                 await transaction.save({ session });
                 await user.save({ session });
             });
@@ -199,22 +199,6 @@ class TransactionServiceImpl implements TransactionService {
         } finally {
             await session.endSession();
         }
-
-        // Create notification based on the status change
-        let notificationMessage = `Transaction ${transaction._id} updated`;
-        if (isStatusChangingToCompleted) {
-            notificationMessage = `Transaction ${transaction._id} completed successfully. Account balance updated.`;
-        } else if (isStatusChangingFromCompleted) {
-            notificationMessage = `Transaction ${transaction._id} status changed from completed. Account balance reversed.`;
-        } else if (transactionData.status) {
-            notificationMessage = `Transaction ${transaction._id} status updated to ${transactionData.status}`;
-        }
-
-        const notification = new Notification({
-            user: user._id,
-            message: notificationMessage,
-        });
-        await notification.save();
 
         return transaction.populate([
             { path: 'user', select: 'firstName lastName email userName' },

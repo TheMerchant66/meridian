@@ -18,12 +18,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 }
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
     try {
         await dbConnect();
-        return await isAdmin(async (req) => {
-            return await updateTransactionController(req, { params });
-        })(req);
+        return await isAdmin(async (req) => updateTransactionController(req, { params }))(req);
     } catch (error) {
         if (error instanceof CustomError) {
             return NextResponse.json({ message: error.message }, { status: error.statusCode });

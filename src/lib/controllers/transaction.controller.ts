@@ -5,6 +5,7 @@ import { CustomError } from '../utils/customError.utils';
 import TransactionServiceImpl from '../services/impl/transaction.service.impl';
 import { AddTransactionDto, UpdateTransactionDto } from '../dto/transaction.dto';
 import { validator } from '../utils/validator.utils';
+import { deepPrune } from '@/utils/sanitize';
 
 const transactionService: TransactionService = new TransactionServiceImpl();
 
@@ -87,24 +88,33 @@ export async function getTransactionByIdController(req: NextRequest, { params }:
     }
 }
 
-export async function updateTransactionController(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function updateTransactionController(
+    req: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
     try {
-        const resolvedParams = await params;
-        const body = await req.json();
-        const updateTransactionDto = new UpdateTransactionDto(body);
+        const { id } = await params;   
+        const raw = await req.json();
 
-        const errors = validator(UpdateTransactionDto, updateTransactionDto);
-        if (errors) {
-            return NextResponse.json({ message: 'Validation Error', errors: errors.details }, { status: 400 });
+        const { value, error } = UpdateTransactionDto.validationSchema.validate(raw);
+        if (error) {
+            return NextResponse.json(
+                { message: 'Validation Error', errors: error.details },
+                { status: 400 }
+            );
         }
 
-        const transaction = await transactionService.updateTransaction(resolvedParams.id, updateTransactionDto);
+        const dto = new UpdateTransactionDto(value);
+
+        const sanitized = deepPrune(dto);
+
+        const transaction = await transactionService.updateTransaction(id, sanitized);
         return NextResponse.json(
             { message: 'Transaction updated successfully', transaction },
             { status: 200 }
         );
     } catch (error: any) {
-        console.log("This is the error", error);
+        console.log('This is the error', error);
         return NextResponse.json(
             { message: error.message || 'Internal server error' },
             { status: error.statusCode || 500 }

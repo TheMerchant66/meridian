@@ -119,14 +119,14 @@ export function MainTransactionsTab({
                         >
                           View Details
                         </Button>
-                        {/* <Button
+                        <Button
                           variant="outline"
                           size="sm"
                           onClick={() => onUpdate(transaction)}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button
+                        {/* <Button
                           variant="outline"
                           size="sm"
                           className="text-red-600 hover:text-red-700"
